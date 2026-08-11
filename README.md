@@ -1,13 +1,19 @@
 # Cutie Explorer
 
-a very minimal file explorer for cutie shell 
-
 <img src="cutie-explorer.svg" width="100px">
 
 A file manager for Cutie Shell. Sidebar with quick-access places (Home,
 Desktop, Documents, Downloads, Pictures, Music, Videos) and detected
 external drives/SD cards, a breadcrumb path bar, list/grid views, and a
 Cut/Copy/Paste/Rename/Properties context menu per item.
+
+## Disclaimer 
+
+This code base is written with the help of AI, use it with caution and review it if you can. 
+The intension behind this is to use as many prebuild modules as possible
+to reduce code base complexity and make it easy to review.
+
+Thank you for your attention to this matter.
 
 ## Building and installing
 

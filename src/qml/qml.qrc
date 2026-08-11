@@ -1,0 +1,11 @@
+<RCC>
+	<qresource prefix="/">
+		<file>main.qml</file>
+		<file>FolderView.qml</file>
+		<file>FileContextMenu.qml</file>
+		<file>RenameDialog.qml</file>
+		<file>PropertiesDialog.qml</file>
+		<file>FileClipboard.qml</file>
+		<file>Formatting.js</file>
+	</qresource>
+</RCC>

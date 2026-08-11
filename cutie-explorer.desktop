@@ -1,0 +1,12 @@
+#!/usr/bin/env xdg-open
+[Desktop Entry]
+Version=1.2
+Type=Application
+Name=Files
+Exec=/usr/bin/cutie-explorer
+TryExec=/usr/bin/cutie-explorer
+Icon=cutie-explorer
+Terminal=false
+StartupNotify=false
+Comment=Browse files and folders
+Categories=System;FileTools;

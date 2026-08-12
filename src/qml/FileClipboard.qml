@@ -1,6 +1,9 @@
+pragma Singleton
 import QtQuick
 
 // Registered as the CutieExplorer.FileClipboard singleton in main.cpp.
+// The URL-based qmlRegisterSingletonType() overload in main.cpp requires
+// this pragma to be present, or the engine refuses to load the type.
 // Just holds cut/copy state - the actual file move/copy happens in
 // FileOperations (C++) when something is pasted.
 QtObject {

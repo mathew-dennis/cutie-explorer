@@ -21,6 +21,12 @@ function humanSize(bytes) {
 		unitIndex++;
 	}
 
-	var decimals = (unitIndex === 0) ? 0 : 1;
-	return value.toFixed(decimals) + " " + units[unitIndex];
+	var decimals = (unitIndex === 0) ? 0 : 2;
+	return value.toFixed(decimals) + units[unitIndex];
+}
+
+function formatDate(date) {
+	if (!date)
+		return "";
+	return Qt.formatDateTime(date, "dd/MM/yy h:mm ap");
 }

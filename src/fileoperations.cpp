@@ -97,3 +97,11 @@ bool FileOperations::renamePath(const QString &path, const QString &newName)
 	}
 	return true;
 }
+
+int FileOperations::entryCount(const QString &path) const
+{
+	QDir dir(path);
+	if (!dir.exists())
+		return -1;
+	return dir.entryList(QDir::AllEntries | QDir::NoDotAndDotDot).count();
+}

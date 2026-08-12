@@ -37,15 +37,18 @@ CutiePage {
 		}
 	}
 
-	// Re-pushes a FolderView for an earlier breadcrumb segment. This grows
-	// the stack rather than popping back to the existing page for that
-	// folder - simple and correct, if not the most economical; worth
-	// revisiting once we know pageStack's pop() signature.
+	// Re-pushing for a breadcrumb tap grows the stack, so back-swipe would
+	// return to wherever you'd drilled down to, not the folder above the
+	// one you tapped. Popping back to that page instead keeps the stack's
+	// depth matching the breadcrumb trail, so a normal back-swipe from
+	// there goes up exactly one level, as expected.
+	//
+	// Stack index 0 is the sidebar (main.qml's initialPage), so crumb
+	// index i lives at stack index i + 1.
 	function goToCrumb(index) {
-		if (folderView.folderComponent.status === Component.Ready) {
-			mainWindow.pageStack.push(folderView.folderComponent,
-				{ crumbs: folderView.crumbs.slice(0, index + 1) });
-		}
+		var targetItem = mainWindow.pageStack.get(index + 1);
+		if (targetItem)
+			mainWindow.pageStack.pop(targetItem);
 	}
 
 	function handleRename(name, path) {
@@ -164,7 +167,9 @@ CutiePage {
 		delegate: CutieListItem {
 			width: listContent.width
 			text: fileName
-			subText: fileIsDir ? "" : Formatting.humanSize(fileSize)
+			subText: fileIsDir
+				? qsTr("%1 items | %2").arg(FileOperations.entryCount(filePath)).arg(Formatting.formatDate(fileModified))
+				: qsTr("%1 | %2").arg(Formatting.humanSize(fileSize)).arg(Formatting.formatDate(fileModified))
 			icon.name: fileIsDir ? "folder-symbolic" : "text-x-generic-symbolic"
 			icon.color: Atmosphere.textColor
 

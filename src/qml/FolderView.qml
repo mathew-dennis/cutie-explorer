@@ -43,12 +43,16 @@ CutiePage {
 	// depth matching the breadcrumb trail, so a normal back-swipe from
 	// there goes up exactly one level, as expected.
 	//
-	// Stack index 0 is the sidebar (main.qml's initialPage), so crumb
-	// index i lives at stack index i + 1.
+	// Todo: test further or fix cutie pageStack
+	//
+	// Cutie's PageStack doesn't expose get()/pop(item) like a plain
+	// QtQuick StackView does - only push() and no-arg pop() are confirmed
+	// to exist (see ApnCfg.qml/WifiPsk.qml in cutie-settings) - so this
+	// just calls pop() once per level instead of targeting a page directly.
 	function goToCrumb(index) {
-		var targetItem = mainWindow.pageStack.get(index + 1);
-		if (targetItem)
-			mainWindow.pageStack.pop(targetItem);
+		var popCount = folderView.crumbs.length - (index + 1);
+		for (var i = 0; i < popCount; i++)
+			mainWindow.pageStack.pop();
 	}
 
 	function handleRename(name, path) {

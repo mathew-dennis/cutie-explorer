@@ -82,7 +82,7 @@ CutieWindow {
 					bottomPadding: 6
 					font.pixelSize: 13
 					font.bold: true
-					opacity: 0.6
+					opacity: 0.85
 				}
 
 				Repeater {
@@ -121,13 +121,13 @@ CutieWindow {
 								width: parent.width
 								height: 6
 								radius: 3
-								color: Atmosphere.secondaryAlphaColor
-								opacity: 0.2
+								color:  Atmosphere.primaryAlphaColor
+								opacity: 1
 
 								Rectangle {
 									height: parent.height
 									radius: 3
-									color: "white"
+									color: Atmosphere.textColor
 									width: parent.width * (modelData.totalBytes > 0
 										? (modelData.totalBytes - modelData.freeBytes) / modelData.totalBytes
 										: 0)
@@ -138,7 +138,7 @@ CutieWindow {
 								text: qsTr("%1 free of %2")
 									.arg(Formatting.humanSize(modelData.freeBytes))
 									.arg(Formatting.humanSize(modelData.totalBytes))
-								opacity: 0.6
+								opacity: 0.85
 								font.pixelSize: 12
 							}
 						}

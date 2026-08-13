@@ -50,23 +50,30 @@ CutieWindow {
 					width: parent.width
 				}
 
-				Repeater {
-					model: mainWindow.places
-					delegate: CutieListItem {
-						width: column.width
-						text: mainWindow.places[index]["text"]
-						icon.name: mainWindow.places[index]["icon"]
-						icon.color: Atmosphere.textColor
-						onClicked: mainWindow.openFolder(
-							mainWindow.places[index]["path"],
-							mainWindow.places[index]["text"]);
+				// ── Places (Home, Desktop, ...) - 2 columns ─────────────
+				Grid {
+					id: placesGrid
+					width: column.width
+					columns: 2
+
+					Repeater {
+						model: mainWindow.places
+						delegate: CutieListItem {
+							width: placesGrid.width / 2
+							text: mainWindow.places[index]["text"]
+							icon.name: mainWindow.places[index]["icon"]
+							icon.color: Atmosphere.textColor
+							onClicked: mainWindow.openFolder(
+								mainWindow.places[index]["path"],
+								mainWindow.places[index]["text"]);
+						}
 					}
 				}
 
 				// ── Drives ──────────────────────────────────────────────
-				// Populated by DriveManager, which only reports volumes
-				// mounted under /media, /run/media or /mnt - i.e. things
-				// the user actually plugged in, not the root filesystem.
+				// Populated by DriveManager: Root and (if present)
+				// Userdata first, then anything actually mounted under
+				// /media, /run/media or /mnt.
 				CutieLabel {
 					text: qsTr("Drives")
 					visible: DriveManager.drives.length > 0
@@ -80,15 +87,66 @@ CutieWindow {
 
 				Repeater {
 					model: DriveManager.drives
-					delegate: CutieListItem {
+
+					delegate: Item {
 						width: column.width
-						text: modelData.name
-						subText: qsTr("%1 free of %2")
-							.arg(Formatting.humanSize(modelData.freeBytes))
-							.arg(Formatting.humanSize(modelData.totalBytes))
-						icon.name: "drive-removable-media-symbolic"
-						icon.color: Atmosphere.textColor
-						onClicked: mainWindow.openFolder(modelData.path, modelData.name)
+						height: driveColumn.height + 20
+
+						Column {
+							id: driveColumn
+							x: 20
+							y: 10
+							width: parent.width - 40
+							spacing: 6
+
+							Row {
+								spacing: 10
+
+								Image {
+									anchors.verticalCenter: parent.verticalCenter
+									source: "image://theme/drive-removable-media-symbolic"
+									sourceSize.width: 20
+									sourceSize.height: 20
+								}
+								CutieLabel {
+									anchors.verticalCenter: parent.verticalCenter
+									text: modelData.name
+									color: Atmosphere.textColor
+								}
+							}
+
+							// Usage bar - white fill over a dim track,
+							// width proportional to used/total space.
+							Rectangle {
+								width: parent.width
+								height: 6
+								radius: 3
+								color: Atmosphere.secondaryAlphaColor
+								opacity: 0.2
+
+								Rectangle {
+									height: parent.height
+									radius: 3
+									color: "white"
+									width: parent.width * (modelData.totalBytes > 0
+										? (modelData.totalBytes - modelData.freeBytes) / modelData.totalBytes
+										: 0)
+								}
+							}
+
+							CutieLabel {
+								text: qsTr("%1 free of %2")
+									.arg(Formatting.humanSize(modelData.freeBytes))
+									.arg(Formatting.humanSize(modelData.totalBytes))
+								opacity: 0.6
+								font.pixelSize: 12
+							}
+						}
+
+						MouseArea {
+							anchors.fill: parent
+							onClicked: mainWindow.openFolder(modelData.path, modelData.name)
+						}
 					}
 				}
 

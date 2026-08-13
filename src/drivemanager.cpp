@@ -43,9 +43,32 @@ QVariantList DriveManager::drives() const
 	return m_drives;
 }
 
+QVariantMap DriveManager::driveEntry(const QString &path, const QString &label) const
+{
+	QStorageInfo info(path);
+	info.refresh();
+
+	QVariantMap entry;
+	entry["name"] = label;
+	entry["path"] = path;
+	entry["totalBytes"] = info.bytesTotal();
+	entry["freeBytes"] = info.bytesAvailable();
+	return entry;
+}
+
 void DriveManager::refresh()
 {
 	QVariantList result;
+
+	// / and /userdata are fixed mount points on this device's own storage
+	// layout, not automounted removable media - added directly here
+	// rather than through the QStorageInfo::mountedVolumes() loop below,
+	// but into the same list so they show up in the same Drives section.
+	// /userdata isn't guaranteed to exist as its own mount on every
+	// Halium setup, so it's only added when actually present.
+	result.append(driveEntry(QStringLiteral("/"), tr("Root")));
+	if (QDir(QStringLiteral("/userdata")).exists())
+		result.append(driveEntry(QStringLiteral("/userdata"), tr("Userdata")));
 
 	// Android partitions that show up mounted under one of the watched
 	// roots on this device but aren't "a drive the user plugged in" -
@@ -69,15 +92,7 @@ void DriveManager::refresh()
 			rootPath.startsWith(QLatin1String("/media/"))
 			|| rootPath.startsWith(QLatin1String("/run/media/"))
 			|| rootPath.startsWith(QLatin1String("/mnt/"));
-
-		// /root and /userdata are fixed mounts on this device's own
-		// storage layout rather than automounted removable media, but
-		// they're wanted in the list too.
-		const bool isExplicitRoot =
-			rootPath == QLatin1String("/root")
-			|| rootPath == QLatin1String("/userdata");
-
-		if (!isRemovableRoot && !isExplicitRoot)
+		if (!isRemovableRoot)
 			continue;
 
 		QString label = volume.displayName();
@@ -88,20 +103,11 @@ void DriveManager::refresh()
 		if (kIgnoredNames.contains(pathTail) || kIgnoredNames.contains(label.toLower()))
 			continue;
 
-		QVariantMap entry;
-		entry["name"] = label;
-		entry["path"] = rootPath;
-		entry["totalBytes"] = volume.bytesTotal();
-		entry["freeBytes"] = volume.bytesAvailable();
-		result.append(entry);
+		result.append(driveEntry(rootPath, label));
 	}
 
 	if (result != m_drives) {
 		m_drives = result;
 		Q_EMIT drivesChanged();
 	}
-}
-        m_drives = result;
-        Q_EMIT drivesChanged();
-    }
 }

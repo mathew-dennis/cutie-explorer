@@ -28,6 +28,7 @@ Q_SIGNALS:
 
 private:
 	void watchRoot(const QString &path);
+	QVariantMap driveEntry(const QString &path, const QString &label) const;
 
 	QFileSystemWatcher m_watcher;
 	QVariantList m_drives;
